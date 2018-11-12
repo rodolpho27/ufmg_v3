@@ -1,0 +1,278 @@
+import matplotlib
+matplotlib.use('Agg')
+
+   #from sklearn.metrics import precision_recall_curve
+   #from sklearn.metrics import average_precision_score
+   #from sklearn.metrics import ndcg
+import numpy as np
+   #from sklearn import metrics
+from itertools import chain
+import matplotlib.pyplot as plt
+import pandas as pd
+import sys, getopt
+   
+class NDCGGraphics:
+   
+   def __init__(self, inputfile, outputfile):
+   #   inputfile = ''
+   
+   
+   
+   
+      treina=pd.read_csv(inputfile, sep=',',header=0)
+      y_traina=np.array(treina['rotulo'])
+      y_score=np.array(treina['score'])
+   
+   
+   #   precision, recall, _ = precision_recall_curve(y_traina, y_score)
+      num_rel=self.descobrerel(y_traina)
+      
+      vecn=[]
+      vecn2={}
+      vecp2={}
+      vect=[]
+      veci=[]
+      veci2=[]
+      vecp=[]
+      for i in chain(range(1, 1000,10), range(1000, 200000, 5000)): 
+   #   for i in range(1, 101,1): 
+         n=self.ndcg_score(y_traina, y_score, k=i)
+   #      n=ndcg_at_k(y_traina, y_score)
+   
+         p=self.ranking_precision_score(y_traina, y_score, k=i)
+         t=self.pegatrue(y_traina,y_score,k=i)
+   #      print str(i)+" "+str(n)
+         if i<num_rel:
+            vecn.append(n)
+            veci2.append(i)
+         vecn2[i]=n
+         vecp2[i]=p
+         vect.append(t)
+         veci.append(i)
+         vecp.append(p)      
+   
+   #   plt.step(veci, vecn, color='b', alpha=0.2, where='post')
+      plt.plot(veci2, vecn, 'k--',label="NDCG@N")
+      plt.plot(veci, vecp, 'b:',label="Precision@N")
+      plt.plot(veci, np.array(vect)/self.descobrerel(y_traina), 'g-',label="Recall@N")
+   #   plt.plot(veci, np.array(vect)/np.array(veci), 'k:',label="% of Relevants")
+   
+   #   legend = plt.legend(loc='upper center', shadow=True, fontsize='x-large')
+      legend = plt.legend(loc='upper right', shadow=False, fontsize='x-small')
+   
+   # Put a nicer background color on the legend.
+      legend.get_frame().set_facecolor('#00FFCC')   
+      
+      
+      
+   #   plt.fill_between(vect, vecn, step='post', alpha=0.2,                 color='b')
+   #
+      plt.xlabel('N')
+      plt.ylabel('Precision and NDCG')
+      plt.ylim([0.0, 1.05])	
+      plt.xlim([0.0, 200000])
+      plt.axvline(x=num_rel)
+   
+      strtitulo="Precision@N and NDCG@N for "+inputfile
+   #   plt.title(strtitulo)
+   #   plt.show()
+   #   #plt.savefig('foo.png')
+      plt.savefig(outputfile)
+   
+      #imprime a tabela:
+   #   v=[10, 20, 50, 100, 500, 1000, 10000, 50000, 100000]
+   #   for i in v:
+      print inputfile
+      print "ndcg "+str(vecn2[11])+" "+str(vecn2[21])+" "+str(vecn2[51])+" "+str(vecn2[101])+" "+str(vecn2[501])+" "+str(vecn2[1000])+" "+str(vecn2[11000])+" "+str(vecn2[51000])+" "+str(vecn2[101000])
+      print "prec "+str(vecp2[11])+" "+str(vecp2[21])+" "+str(vecp2[51])+" "+str(vecp2[101])+" "+str(vecp2[501])+" "+str(vecp2[1000])+" "+str(vecp2[11000])+" "+str(vecp2[51000])+" "+str(vecp2[101000])
+   #   print str(vecp2[10])+" "+str(vecp2[20])+" "+str(vecp2[50])+" "+str(vecp2[100])
+      
+       
+   def ranking_precision_score(self, y_true, y_score, k=10):
+       """Precision at rank k
+       Parameters
+       ----------
+       y_true : array-like, shape = [n_samples]
+           Ground truth (true relevance labels).
+       y_score : array-like, shape = [n_samples]
+           Predicted scores.
+       k : int
+           Rank.
+       Returns
+       -------
+       precision @k : float
+       """
+       unique_y = np.unique(y_true)
+   
+       if len(unique_y) > 2:
+           raise ValueError("Only supported for two relevance levels.")
+   
+       pos_label = unique_y[1]
+       n_pos = np.sum(y_true == pos_label)
+   
+       order = np.argsort(y_score, kind='heapsort')[::-1]
+       y_true = np.take(y_true, order[:k])
+       n_relevant = np.sum(y_true == pos_label)
+   
+       # Divide by min(n_pos, k) such that the best achievable score is always 1.0.
+   #    return float(n_relevant) / min(n_pos, k)
+       return float(n_relevant) / k
+   
+   
+   def average_precision_score(self, y_true, y_score, k=10):
+       """Average precision at rank k
+       Parameters
+       ----------
+       y_true : array-like, shape = [n_samples]
+           Ground truth (true relevance labels).
+       y_score : array-like, shape = [n_samples]
+           Predicted scores.
+       k : int
+           Rank.
+       Returns
+       -------
+       average precision @k : float
+       """
+       unique_y = np.unique(y_true)
+   
+       if len(unique_y) > 2:
+           raise ValueError("Only supported for two relevance levels.")
+   
+       pos_label = unique_y[1]
+       n_pos = np.sum(y_true == pos_label)
+   
+       order = np.argsort(y_score,kind='heapsort')[::-1][:min(n_pos, k)]
+       y_true = np.asarray(y_true)[order]
+   
+       score = 0
+       for i in xrange(len(y_true)):
+           if y_true[i] == pos_label:
+               # Compute precision up to document i
+               # i.e, percentage of relevant documents up to document i.
+               prec = 0
+               for j in xrange(0, i + 1):
+                   if y_true[j] == pos_label:
+                       prec += 1.0
+               prec /= (i + 1.0)
+               score += prec
+   
+       if n_pos == 0:
+           return 0
+   
+       return score / n_pos
+   
+   
+   def dcg_score(self, y_true, y_score, k=10, gains="exponential"):
+       """Discounted cumulative gain (DCG) at rank k
+       Parameters
+       ----------
+       y_true : array-like, shape = [n_samples]
+           Ground truth (true relevance labels).
+       y_score : array-like, shape = [n_samples]
+           Predicted scores.
+       k : int
+           Rank.
+       gains : str
+           Whether gains should be "exponential" (default) or "linear".
+       Returns
+       -------
+       DCG @k : float
+       """
+       order = np.argsort(y_score,kind='heapsort')[::-1]
+       y_true2 = np.take(y_true, order[:k])
+   
+       if gains == "exponential":
+           gains = 2 ** y_true2 - 1
+       elif gains == "linear":
+           gains = y_true2
+       else:
+           raise ValueError("Invalid gains option.")
+   
+       # highest rank is 1 so +2 instead of +1
+       discounts = np.log2(np.arange(len(y_true2)) + 2)
+       return np.nansum(gains / discounts)
+   
+   
+   def pegatrue(self, y_true, y_score, k=10):
+       """Discounted cumulative gain (DCG) at rank k
+       Parameters
+       ----------
+       y_true : array-like, shape = [n_samples]
+           Ground truth (true relevance labels).
+       y_score : array-like, shape = [n_samples]
+           Predicted scores.
+       k : int
+           Rank.
+       gains : str
+           Whether gains should be "exponential" (default) or "linear".
+       Returns
+       -------
+       DCG @k : float
+       """
+       order = np.argsort(y_score,kind='heapsort')[::-1]
+       y_true = np.take(y_true, order[:k])
+   
+   #    if gains == "exponential":
+   #        gains = 2 ** y_true - 1
+   #    elif gains == "linear":
+   #        gains = y_true
+   #    else:
+   #        raise ValueError("Invalid gains option.")
+   
+       # highest rank is 1 so +2 instead of +1
+   #    discounts = np.log2(np.arange(len(y_true)) + 2)
+       return np.sum(y_true)
+   
+   def descobrerel(self, y_true):
+       """Discounted cumulative gain (DCG) at rank k
+       Parameters
+       ----------
+       y_true : array-like, shape = [n_samples]
+           Ground truth (true relevance labels).
+       y_score : array-like, shape = [n_samples]
+           Predicted scores.
+       k : int
+           Rank.
+       gains : str
+           Whether gains should be "exponential" (default) or "linear".
+       Returns
+       -------
+       DCG @k : float
+       """
+   #    order = np.argsort(y_score)[::-1]
+   #    y_true = np.take(y_true, order[:k])
+   
+   #    if gains == "exponential":
+   #        gains = 2 ** y_true - 1
+   #    elif gains == "linear":
+   #        gains = y_true
+   #    else:
+   #        raise ValueError("Invalid gains option.")
+   
+       # highest rank is 1 so +2 instead of +1
+   #    discounts = np.log2(np.arange(len(y_true)) + 2)
+       return np.sum(y_true)
+   
+   
+   def ndcg_score(self, y_true, y_score, k=10, gains="exponential"):
+       """Normalized discounted cumulative gain (NDCG) at rank k
+       Parameters
+       ----------
+       y_true : array-like, shape = [n_samples]
+           Ground truth (true relevance labels).
+       y_score : array-like, shape = [n_samples]
+           Predicted scores.
+       k : int
+           Rank.
+       gains : str
+           Whether gains should be "exponential" (default) or "linear".
+       Returns
+       -------
+       NDCG @k : float
+       """
+       best = self.dcg_score(y_true, y_true, k, gains)
+       actual = self.dcg_score(y_true, y_score, k, gains)
+       return actual / best
+   
+   
+   

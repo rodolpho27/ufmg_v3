@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de mailing da claro miggracao
+features:
+    serasa,cli_bom_rel,mplay,compl_45,inadim,rep_crivo,pre_are_cab,nome_inv,pub,noventa_dias,31a59,recore90,doc10,comp_45,complementar
+
+chamada: 
+	sudo python mailing.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+mailing.csv (features com ids de chamadas e clientes) e mailing_noids.csv(sem ids)

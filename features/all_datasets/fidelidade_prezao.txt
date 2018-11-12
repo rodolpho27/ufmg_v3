@@ -1,0 +1,14 @@
+objetivo: 
+	obtem features de fidelidade de prezao da claro miggracao
+features:
+    prop
+
+
+chamada: 
+	sudo python fidelidade_prezao.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+fidelidade_prezao.csv (features com ids de chamadas e clientes) e fidelidade_prezao_noids.csv(sem ids)

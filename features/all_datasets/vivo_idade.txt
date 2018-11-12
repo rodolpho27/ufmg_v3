@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de idade da vivo migracao
+features:
+    cl_bday,classe_idade
+
+chamada: 
+	sudo python vivo_idade.py -db files3_vivo_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+vivo_idade.csv (features com ids de chamadas e clientes) e vivo_idade_noids.csv(sem ids)

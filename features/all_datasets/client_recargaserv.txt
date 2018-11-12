@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de servicos de recarga da claro migracao
+features:
+    bonus_voz,bonus_esp_rec,rec_10,chip_pre_rec_10,on_net_3,on_net_7,prezao_14,off_net_7
+
+chamada: 
+	sudo python client_recargaserv.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+recarga_servicos.csv (features com ids de chamadas e clientes) e recarga_servicos_noids.csv(sem ids)

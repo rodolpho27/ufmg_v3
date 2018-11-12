@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de mailing da vivo miggracao
+features:
+    mailing_padrao,whitelist
+
+chamada: 
+	sudo python vivo_mailing.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+vivo_mailing.csv (features com ids de chamadas e clientes) e vivo_mailing_noids.csv(sem ids)

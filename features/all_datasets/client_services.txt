@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de servicos dos clientes da da claro migracao
+features:
+    inter_avulsa,blacklist,pct_100mb_wh,pct_200mb_wh,som_cham,som_cham_ili,claro_rec,claro_rec_prem,rec_avulso,claro_contato,claro_conecta
+
+chamada: 
+	sudo python client_services.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+client_services.csv (features com ids de chamadas e clientes) e client_services_noids.csv(sem ids)

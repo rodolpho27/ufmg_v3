@@ -1,0 +1,13 @@
+objetivo: 
+	obtem as features de ligaoes locais e interurbanas dos clientes da claro miggracao
+features:
+    total_ld,total_local
+
+chamada: 
+	sudo python features_ligacoes_clientes.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+ligacoes.csv (features com ids de chamadas e clientes) e ligacoes_noids.csv(sem ids)

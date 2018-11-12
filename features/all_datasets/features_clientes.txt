@@ -1,0 +1,16 @@
+chamada:
+
+
+objetivo: 
+	obtem features das informacoes de clientes da claro miggracao
+features:
+    ddd,regional,estado_chip,estado_nasc
+
+chamada: 
+	sudo python features_clientes.py -db files3_claro_mig -o 
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera três arquivos com as features, sendo:
+features_clientes.csv (features com ids de chamadas e clientes) features_clientes_just_cat.csv (somente atributos numéricos) e features_clientes.csv_noids.csv (somente atributos numéricos e sem ids)

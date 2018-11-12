@@ -1,0 +1,14 @@
+
+objetivo: 
+	obtem features de status dos clientes da claro miggracao
+features:
+    barrado,ativo,cancelado
+
+chamada: 
+	sudo python vivo_status_cliente.py -db files3_vivo_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+vivo_status_cliente.csv (features com ids de chamadas e clientes) e vivo_status_cliente_noids.csv(sem ids)

@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de quantidade de prezao da claro miggracao
+features:
+    prezao_muito_mails,prezao_muito_mais_mensal,prezao_fala_mais_mensal,prezao_ilimitado
+
+chamada: 
+	sudo python qtd_prezao.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+qtd_prezao.csv (features com ids de chamadas e clientes) e qtd_prezao_noids.csv(sem ids)

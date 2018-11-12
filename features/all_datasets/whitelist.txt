@@ -1,0 +1,13 @@
+objetivo: 
+	obtem a feature whitelist da claro e vivo migracao
+features:
+    whitelist
+
+chamada: 
+	sudo python whitelist.py -db files3_claro_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+whitelist.csv (features com ids de chamadas e clientes) e whitelist_noids.csv(sem ids)

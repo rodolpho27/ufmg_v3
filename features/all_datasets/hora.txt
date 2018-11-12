@@ -1,0 +1,4 @@
+Hora em que foi feita a chamada.
+Essa feature contém um vetor binário de 24 posições. 
+Se a chamada foi feita dentro das 14h, por exemplo, a posição do vetor referente
+às 14h será atribuída como 1, caso contrário, 0.

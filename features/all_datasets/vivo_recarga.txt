@@ -1,0 +1,13 @@
+objetivo: 
+	obtem features de recarga da vivo miggracao
+features:
+    rec_fisica,rec_pdv,rec_combo,rec_credito_antecipado,rec_servcel
+
+chamada: 
+	sudo python vivo_recargag.py -db files3_vivo_mig -o caminho para salvar saida
+
+db = banco de dados para gerar features
+o = caminho para saida
+
+saida: gera dois arquivos com as features, sendo:
+vivo_recarga.csv (features com ids de chamadas e clientes) e vivo_recarga_noids.csv(sem ids)

@@ -1,0 +1,5 @@
+Feature indicando o dia da semana em que foi feita a chamada.
+
+Essa feature binária contém um vetor de 7 posições (uma para cada dia da semana). Se
+a chamada foi feita na segunda, por exemplo, a posico correspondente a
+segunta terá o valor 1 e o restante terá o valor 0.
